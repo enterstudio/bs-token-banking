@@ -1,0 +1,24 @@
+{
+  "name": "bs-token-banking",
+  "version": "1.0.0",
+  "description": "Utility smart contract to convert bs-tokens from and to 'real money'.",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://jlpiedrahita@github.com/BancoSabadell/bs-token-banking.git"
+  },
+  "keywords": [
+    "solidity",
+    "token",
+    "banking"
+  ],
+  "author": "Jose Luis Piedrahita <jlpiedrahita@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/BancoSabadell/bs-token-banking/issues"
+  },
+  "homepage": "https://github.com/BancoSabadell/bs-token-banking#readme"
+}
