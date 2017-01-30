@@ -20,7 +20,7 @@ contract BSBanking is Ownable {
 
     function cashIn(address sender, uint256 amount) onlyOwner {
         tokenData.setBalance(sender, tokenData.getBalance(sender) + amount);
-        tokenData.setTotalSupply(tokenData.getTotalSupply() - amount);
+        tokenData.setTotalSupply(tokenData.getTotalSupply() + amount);
     }
 
 }
