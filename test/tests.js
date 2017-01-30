@@ -93,4 +93,14 @@ describe('BSBanking contract', function () {
             .should.be.rejected;
     });
 
+    it('should launch CashOut even after cash out', function () {
+        return bsTokenBankingContract.cashOutAsync(account2, 500, fakeBankAccount, { from: account1, gas: 4000000 })
+            .then(() => bsTokenBankingContract.CashOutAsync())
+            .should.eventually.satisfy(event => {
+                return event.args.amount.equals(new BigNumber(500)) &&
+                    event.args.bankAccount === fakeBankAccount &&
+                    event.args.receiver === account2;
+            }, 'invalid CashOut event');
+    }).timeout(40000);
+
 });
