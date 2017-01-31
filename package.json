@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/BancoSabadell/bs-token-banking#readme",
   "devDependencies": {
-    "bluebird": "^3.4.6",
     "chai": "^3.5.0",
     "chai-as-promised": "^6.0.0",
     "ethereumjs-testrpc": "^3.0.3",

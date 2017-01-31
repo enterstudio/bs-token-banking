@@ -8,7 +8,6 @@ const chaiAsPromised = require('chai-as-promised');
 const BSToken = require('bs-token');
 const Deployer = require('contract-deployer');
 const BigNumber = require('bignumber.js');
-const Promise = require('bluebird');
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -55,10 +54,10 @@ describe('BSBanking contract', function () {
             })
             .then(bsTokenBanking => {
                 bsTokenBankingContract = bsTokenBanking;
-                return Promise.join(
+                return Promise.all([
                     bsTokenDataContract.addMerchantAsync(bsTokenBanking.address, { from: account1, gas: 4000000 }),
                     bsTokenDataContract.addMerchantAsync(account3, { from: account1, gas: 4000000 })
-                );
+                ]);
             });
     });
 
