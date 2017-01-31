@@ -94,6 +94,11 @@ describe('BSBanking contract', function () {
                 `Total token supply should be 200 after 500€ cash in`);
     });
 
+    it('should fail if cash out amount greater than account balance', function () {
+            return bsTokenBankingContract.cashOutAsync(account2, 201, fakeBankAccount, { from: account1, gas: 4000000 })
+            .should.be.rejected;
+    });
+
     it('should fail if cash in is not performed by the contract owner', function () {
         return bsTokenBankingContract.cashInAsync(account2, 100, { from: account2, gas: 4000000 })
             .should.be.rejected;
@@ -112,8 +117,9 @@ describe('BSBanking contract', function () {
         return bsTokenBankingContract.cashOutAsync(account2, 100, fakeBankAccount, { from: account1, gas: 4000000 })
     });
 
-    it('should launch CashOut event after cash out', function () {
-        return bsTokenBankingContract.cashOutAsync(account2, 500, fakeBankAccount, { from: account1, gas: 4000000 })
+    it('should launch CashOut even after cash out', function () {
+        return bsTokenBankingContract.cashInAsync(account2, 500, { from: account1, gas: 4000000 })
+            .then(() => bsTokenBankingContract.cashOutAsync(account2, 500, fakeBankAccount, { from: account1, gas: 4000000 }))
             .then(() => bsTokenBankingContract.CashOutAsync())
             .should.eventually.satisfy(event => {
                 return event.args.amount.equals(new BigNumber(500)) &&
@@ -121,5 +127,4 @@ describe('BSBanking contract', function () {
                     event.args.receiver === account2;
             }, 'invalid CashOut event');
     }).timeout(40000);
-
 });

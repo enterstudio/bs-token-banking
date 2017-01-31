@@ -6,6 +6,7 @@ import "BSTokenData.sol";
 contract BSBanking is Ownable {
 
     BSTokenData public tokenData;
+
     event CashOut(address indexed receiver, uint256 amount, string bankAccount);
 
     function BSBanking(address bsTokenDataAddress) {
@@ -13,6 +14,10 @@ contract BSBanking is Ownable {
     }
 
     function cashOut(address sender, uint256 amount, string bankAccount) onlyAdminOrMerchants {
+        if(amount > tokenData.getBalance(sender)) {
+            throw;
+        }
+
         tokenData.setBalance(sender, tokenData.getBalance(sender) - amount);
         tokenData.setTotalSupply(tokenData.getTotalSupply() - amount);
         CashOut(sender, amount, bankAccount);
