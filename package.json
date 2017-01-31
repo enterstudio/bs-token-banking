@@ -15,7 +15,6 @@
     "token",
     "banking"
   ],
-  "author": "Jose Luis Piedrahita <jlpiedrahita@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/BancoSabadell/bs-token-banking/issues"
