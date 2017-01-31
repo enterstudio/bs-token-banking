@@ -8,6 +8,7 @@ const chaiAsPromised = require('chai-as-promised');
 const BSToken = require('bs-token');
 const Deployer = require('contract-deployer');
 const BigNumber = require('bignumber.js');
+const Promise = require('bluebird');
 
 chai.use(chaiAsPromised);
 chai.should();
@@ -16,6 +17,8 @@ describe('BSBanking contract', function () {
 
     const account1 = '0x5bd47e61fbbf9c8b70372b6f14b068fddbd834ac';
     const account2 = '0x25e940685e0999d4aa7bd629d739c6a04e625761';
+    const account3 = '0x6128333118cef876bd620da1efa464437470298d';
+
     const fakeBankAccount = '1111 2222 33 4444444444';
 
     const testContracts = Object.assign(BSToken.contracts, {
@@ -31,6 +34,10 @@ describe('BSBanking contract', function () {
             index: 1,
             secretKey: '0x998c22e6ab1959d6ac7777f12d583cc27d6fb442c51770125ab9246cb549db81',
             balance: 200000000
+        }, {
+            index: 2,
+            balance: 200000000,
+            secretKey: '0x998c22e6ab1959d6ac7777f12d583cc27d6fb442c51770125ab9246cb549db82'
         }]
     }));
 
@@ -44,10 +51,14 @@ describe('BSBanking contract', function () {
         return deployer.deploy('BSTokenData', [], { from: account1, gas: 4000000 })
             .then(bsTokenData => {
                 bsTokenDataContract = bsTokenData;
-                return deployer.deploy('BSBanking', [bsTokenData.address], { from: account1, gas: 4000000 });
-            }).then(bsTokenBanking => {
+                return deployer.deploy('BSBanking', [bsTokenDataContract.address], { from: account1, gas: 4000000 });
+            })
+            .then(bsTokenBanking => {
                 bsTokenBankingContract = bsTokenBanking;
-                return bsTokenDataContract.addMerchantAsync(bsTokenBanking.address, { from: account1, gas: 4000000 });
+                return Promise.join(
+                    bsTokenDataContract.addMerchantAsync(bsTokenBanking.address, { from: account1, gas: 4000000 }),
+                    bsTokenDataContract.addMerchantAsync(account3, { from: account1, gas: 4000000 })
+                );
             });
     });
 
@@ -88,12 +99,20 @@ describe('BSBanking contract', function () {
             .should.be.rejected;
     });
 
-    it('should fail if cash out is not performed by the contract owner', function () {
-        return bsTokenBankingContract.cashOutAsync(account2, 100, { from: account2, gas: 4000000 })
+    it('should fail if cash out is not performed by the contract owner neither a merchant', function () {
+        return bsTokenBankingContract.cashOutAsync(account2, 100, fakeBankAccount, { from: account2, gas: 4000000 })
             .should.be.rejected;
     });
 
-    it('should launch CashOut even after cash out', function () {
+    it('should pass if cash out is performed by a merchant', function () {
+        return bsTokenBankingContract.cashOutAsync(account2, 100, fakeBankAccount, { from: account3, gas: 4000000 })
+    });
+
+    it('should pass if cash out is performed by the owner', function () {
+        return bsTokenBankingContract.cashOutAsync(account2, 100, fakeBankAccount, { from: account1, gas: 4000000 })
+    });
+
+    it('should launch CashOut event after cash out', function () {
         return bsTokenBankingContract.cashOutAsync(account2, 500, fakeBankAccount, { from: account1, gas: 4000000 })
             .then(() => bsTokenBankingContract.CashOutAsync())
             .should.eventually.satisfy(event => {
