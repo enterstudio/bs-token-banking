@@ -99,7 +99,8 @@ describe('BSBanking contract', function () {
     });
 
     it('should launch CashOut even after cash out', function () {
-        return bsTokenBankingContract.cashOutAsync(account2, 500, fakeBankAccount, { from: account1, gas: 4000000 })
+        return bsTokenBankingContract.cashInAsync(account2, 500, { from: account1, gas: 4000000 })
+            .then(() => bsTokenBankingContract.cashOutAsync(account2, 500, fakeBankAccount, { from: account1, gas: 4000000 }))
             .then(() => bsTokenBankingContract.CashOutAsync())
             .should.eventually.satisfy(event => {
                 return event.args.amount.equals(new BigNumber(500)) &&
