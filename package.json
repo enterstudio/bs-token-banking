@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "bignumber.js": "^4.0.0",
-    "bs-token": "^1.0.0",
+    "bs-token-data": "^1.0.0",
     "solc": "^0.4.8",
     "web3": "^0.18.2"
   }

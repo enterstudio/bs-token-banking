@@ -13,14 +13,14 @@ contract BSBanking is Ownable {
         tokenData = BSTokenData(bsTokenDataAddress);
     }
 
-    function cashOut(address sender, uint256 amount, string bankAccount) onlyAdminOrMerchants {
-        if(amount > tokenData.getBalance(sender)) {
+    function cashOut(uint256 amount, string bankAccount) {
+        if(amount > tokenData.getBalance(msg.sender)) {
             throw;
         }
 
-        tokenData.setBalance(sender, tokenData.getBalance(sender) - amount);
+        tokenData.setBalance(msg.sender, tokenData.getBalance(msg.sender) - amount);
         tokenData.setTotalSupply(tokenData.getTotalSupply() - amount);
-        CashOut(sender, amount, bankAccount);
+        CashOut(msg.sender, amount, bankAccount);
     }
 
     function cashIn(address sender, uint256 amount) onlyAdmin {
@@ -30,11 +30,6 @@ contract BSBanking is Ownable {
 
     modifier onlyAdmin {
         if (msg.sender != owner) throw;
-        _;
-    }
-
-    modifier onlyAdminOrMerchants {
-        if (msg.sender != owner && !tokenData.merchants(msg.sender)) throw;
         _;
     }
 }
