@@ -63,7 +63,7 @@ describe('BSBanking contract', function () {
     });
 
     it('should decrease account balance after cash out', function () {
-        return bsTokenBankingContract.cashOutAsync(account2, 100, fakeBankAccount, { from: account1, gas: gas })
+        return bsTokenBankingContract.cashOutAsync(100, fakeBankAccount, { from: account2, gas: gas })
             .then(() => bsTokenDataContract.getBalanceAsync(account2))
             .should.eventually.satisfy(balance => balance.equals(new BigNumber(0)),
                 `Token balance of ${account2} should be 0 after 100€ cash out`);
@@ -77,14 +77,14 @@ describe('BSBanking contract', function () {
     });
 
     it('should decrease total token supply after cash out', function () {
-        return bsTokenBankingContract.cashOutAsync(account2, 500, fakeBankAccount, { from: account1, gas: gas })
+        return bsTokenBankingContract.cashOutAsync(500, fakeBankAccount, { from: account2, gas: gas })
             .then(() => bsTokenDataContract.getTotalSupplyAsync())
             .should.eventually.satisfy(totalSupply => totalSupply.equals(new BigNumber(200)),
                 `Total token supply should be 200 after 500€ cash in`);
     });
 
     it('should fail if cash out amount greater than account balance', function () {
-            return bsTokenBankingContract.cashOutAsync(account2, 201, fakeBankAccount, { from: account1, gas: gas })
+            return bsTokenBankingContract.cashOutAsync(201, fakeBankAccount, { from: account2, gas: gas })
             .should.be.rejected;
     });
 
@@ -93,22 +93,9 @@ describe('BSBanking contract', function () {
             .should.be.rejected;
     });
 
-    it('should fail if cash out is not performed by the contract owner neither a merchant', function () {
-        return bsTokenBankingContract.cashOutAsync(account2, 100, fakeBankAccount, { from: account2, gas: gas })
-            .should.be.rejected;
-    });
-
-    it('should pass if cash out is performed by a merchant', function () {
-        return bsTokenBankingContract.cashOutAsync(account2, 100, fakeBankAccount, { from: account3, gas: gas })
-    });
-
-    it('should pass if cash out is performed by the owner', function () {
-        return bsTokenBankingContract.cashOutAsync(account2, 100, fakeBankAccount, { from: account1, gas: gas })
-    });
-
     it('should launch CashOut even after cash out', function () {
         return bsTokenBankingContract.cashInAsync(account2, 500, { from: account1, gas: gas })
-            .then(() => bsTokenBankingContract.cashOutAsync(account2, 500, fakeBankAccount, { from: account1, gas: gas }))
+            .then(() => bsTokenBankingContract.cashOutAsync(500, fakeBankAccount, { from: account2, gas: gas }))
             .then(() => bsTokenBankingContract.CashOutAsync())
             .should.eventually.satisfy(event => {
                 return event.args.amount.equals(new BigNumber(500)) &&
