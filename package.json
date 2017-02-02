@@ -1,6 +1,6 @@
 {
   "name": "bs-token-banking",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Utility smart contract to convert bs-tokens from and to 'real money'.",
   "main": "src/index.js",
   "scripts": {
@@ -28,8 +28,10 @@
     "contract-deployer": "git+https://b023fb82675b80f34b3c472fae80b01df7130217:x-oauth-basic@github.com/BancoSabadell/contract-deployer.git"
   },
   "dependencies": {
+    "bluebird": "^3.4.6",
+    "sendgrid": "^4.7.1",
     "bignumber.js": "^4.0.0",
-    "bs-token": "^1.0.0",
+    "bs-token-data": "^1.0.0",
     "solc": "^0.4.8",
     "web3": "^0.18.2"
   }
