@@ -3,13 +3,13 @@ pragma solidity ^0.4.2;
 import "Ownable.sol";
 import "BSTokenData.sol";
 
-contract BSBanking is Ownable {
+contract BSTokenBanking is Ownable {
 
     BSTokenData public tokenData;
 
     event CashOut(address indexed receiver, uint256 amount, string bankAccount);
 
-    function BSBanking(address bsTokenDataAddress) {
+    function BSTokenBanking(address bsTokenDataAddress) {
         tokenData = BSTokenData(bsTokenDataAddress);
     }
 
