@@ -41,7 +41,10 @@ describe('BSTokenBanking lib', function () {
                 lib = new BSTokenBanking(web3, {
                     admin: { account: account1, password: ''},
                     bsTokenDataContract: bsTokenDataContract,
-                    bsTokenBankingContract: bsTokenBankingContract
+                    bsTokenBankingContract: bsTokenBankingContract,
+                    sendgrid: {
+                        apiKey: ''
+                    }
                 });
             })
     });
