@@ -38,7 +38,7 @@ describe('BSTokenBanking lib', function () {
                 return BSTokenBanking.deployedContract(web3, account1, bsTokenDataContract, permissionManager, gas);
             })
             .then((contract) => bsTokenBankingContract = contract)
-            .then(() => bsTokenDataContract.addMerchantAsync(account3, { from: account1, gas: gas }))
+            .then(() => bsTokenDataContract.addLogicAsync(account3, { from: account1, gas: gas }))
             .then(() => {
                 lib = new BSTokenBanking(web3, {
                     admin: { account: account1, password: ''},

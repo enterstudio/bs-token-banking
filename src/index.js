@@ -80,7 +80,7 @@ module.exports.deployedContract = function (web3, admin, bsTokenData, permission
     const deployer = new Deployer(web3, {sources: contracts}, 0);
     return deployer.deploy('BSTokenBanking', [bsTokenData.address, permissionManager.address], { from: admin, gas: gas })
         .then(bsTokenBanking => {
-            return bsTokenData.addMerchantAsync(bsTokenBanking.address, { from: admin, gas: gas })
+            return bsTokenData.addLogicAsync(bsTokenBanking.address, { from: admin, gas: gas })
                 .then(() => bsTokenBanking);
         });
 };

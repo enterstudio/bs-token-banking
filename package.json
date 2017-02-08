@@ -1,6 +1,6 @@
 {
   "name": "bs-token-banking",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Utility smart contract to convert bs-tokens from and to 'real money'.",
   "main": "src/index.js",
   "scripts": {
@@ -32,7 +32,7 @@
     "sendgrid": "^4.7.1",
     "bignumber.js": "^4.0.0",
     "gt-permission-manager": "^1.0.3",
-    "bs-token-data": "^1.0.3",
+    "bs-token-data": "^1.0.4",
     "solc": "^0.4.8",
     "web3": "^0.18.2"
   }
