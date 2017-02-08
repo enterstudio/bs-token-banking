@@ -3,9 +3,9 @@
 const fs = require('fs');
 const Web3 = require('web3');
 const provider = require('./mock-web3-provider');
-const TestRPC = require('ethereumjs-testrpc');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+const GTPermissionManager = require('gt-permission-manager');
 const BSTokenData = require('bs-token-data');
 const BSTokenBanking = require('../src/index');
 const BigNumber = require('bignumber.js');
@@ -20,20 +20,22 @@ describe('BSTokenBanking lib', function () {
     const account3 = '0x6128333118cef876bd620da1efa464437470298d';
 
     const fakeBankAccount = '1111 2222 33 4444444444';
-
     const web3 = new Web3(provider);
 
+    let permissionManager;
     let bsTokenDataContract;
     let bsTokenBankingContract;
     let lib;
 
     before('Deploy contracts', function () {
-        this.timeout(10000);
+        this.timeout(60000);
 
-        return BSTokenData.deployedContract(web3, account1, gas)
+        return GTPermissionManager.deployedContract(web3, account1, gas)
+            .then((contract) => permissionManager = contract)
+            .then(() => BSTokenData.deployedContract(web3, account1, permissionManager, gas))
             .then(contract => {
                 bsTokenDataContract = contract;
-                return BSTokenBanking.deployedContract(web3, account1, bsTokenDataContract, gas);
+                return BSTokenBanking.deployedContract(web3, account1, bsTokenDataContract, permissionManager, gas);
             })
             .then((contract) => bsTokenBankingContract = contract)
             .then(() => bsTokenDataContract.addMerchantAsync(account3, { from: account1, gas: gas }))
@@ -46,7 +48,7 @@ describe('BSTokenBanking lib', function () {
                         apiKey: ''
                     }
                 });
-            })
+            });
     });
 
     it('should increase account balance after cash in', function () {

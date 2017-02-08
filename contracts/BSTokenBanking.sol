@@ -1,16 +1,16 @@
 pragma solidity ^0.4.2;
 
-import "Ownable.sol";
+import "Admin.sol";
 import "BSTokenData.sol";
 
-contract BSTokenBanking is Ownable {
-
+contract BSTokenBanking is Admin {
     BSTokenData public tokenData;
 
     event CashOut(address indexed receiver, uint256 amount, string bankAccount);
 
-    function BSTokenBanking(address bsTokenDataAddress) {
+    function BSTokenBanking(address bsTokenDataAddress, address permissionManagerAddress) {
         tokenData = BSTokenData(bsTokenDataAddress);
+        super.setPMAddress(permissionManagerAddress);
     }
 
     function cashOut(uint256 amount, string bankAccount) {
@@ -26,10 +26,5 @@ contract BSTokenBanking is Ownable {
     function cashIn(address sender, uint256 amount) onlyAdmin {
         tokenData.setBalance(sender, tokenData.getBalance(sender) + amount);
         tokenData.setTotalSupply(tokenData.getTotalSupply() + amount);
-    }
-
-    modifier onlyAdmin {
-        if (msg.sender != owner) throw;
-        _;
     }
 }
