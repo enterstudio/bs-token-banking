@@ -5,6 +5,7 @@ const Web3 = require('web3');
 const TestRPC = require('ethereumjs-testrpc');
 const chai = require('chai');
 const chaiAsPromised = require('chai-as-promised');
+const GTPermissionManager = require('gt-permission-manager');
 const BSTokenData = require('bs-token-data');
 const BSTokenBanking = require('../src/index');
 const BigNumber = require('bignumber.js');
@@ -36,16 +37,19 @@ describe('BSTokenBanking contract', function () {
         }]
     }));
 
+    let permissionManager;
     let bsTokenDataContract;
     let bsTokenBankingContract;
 
     before('Deploy contracts', function () {
-        this.timeout(10000);
+        this.timeout(60000);
 
-        return BSTokenData.deployedContract(web3, account1, gas)
+        return GTPermissionManager.deployedContract(web3, account1, gas)
+            .then((contract) => permissionManager = contract)
+            .then(() => BSTokenData.deployedContract(web3, account1, permissionManager, gas))
             .then(contract => {
                 bsTokenDataContract = contract;
-                return BSTokenBanking.deployedContract(web3, account1, bsTokenDataContract, gas);
+                return BSTokenBanking.deployedContract(web3, account1, bsTokenDataContract, permissionManager, gas);
             })
             .then((contract) => bsTokenBankingContract = contract)
             .then(() => bsTokenDataContract.addMerchantAsync(account3, { from: account1, gas: gas }));
@@ -103,4 +107,51 @@ describe('BSTokenBanking contract', function () {
                     event.args.receiver === account2;
             }, 'invalid CashOut event');
     }).timeout(40000);
+
+    describe('transferOwnership', () => {
+        it('add admin as non admin', () => {
+            return permissionManager.setRolAsync(account2, 1, {
+                from: account2,
+                gas: gas
+            }).should.eventually.be.rejected;
+        });
+
+        it('check admin status', () => {
+            return permissionManager.getRolAsync(account2)
+                .should.eventually.satisfy(rol => rol.equals(new BigNumber(0)), `rol should be 0`);
+        });
+
+        it('cashInAsync should be rejected', () => {
+            return bsTokenBankingContract.cashInAsync(account3, 100, { from: account2, gas: gas })
+                .should.be.rejected;
+        });
+
+        it('check balanceOf', () => {
+            return bsTokenDataContract.getBalanceAsync(account3)
+                .should.eventually.satisfy(balance => balance.equals(new BigNumber(0)),
+                    `Token balance of ${account3} should be 0 after`);
+        });
+
+        it('add account2 as admin', () => {
+            return permissionManager.setRolAsync(account2, 1, {
+                from: account1,
+                gas: gas
+            });
+        });
+
+        it('check admin status', () => {
+            return permissionManager.getRolAsync(account2)
+                .should.eventually.satisfy(rol => rol.equals(new BigNumber(1)), `rol should be 1`);
+        });
+
+        it('cashInAsync should be fulfilled', () => {
+            return bsTokenBankingContract.cashInAsync(account3, 100, { from: account2, gas: gas })
+        });
+
+        it('check balanceOf', () => {
+            return bsTokenDataContract.getBalanceAsync(account3)
+                .should.eventually.satisfy(balance => balance.equals(new BigNumber(100)),
+                    `Token balance of ${account3} should be 100 after`);
+        });
+    });
 });
