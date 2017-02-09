@@ -30,12 +30,12 @@ describe('BSTokenBanking lib', function () {
     before('Deploy contracts', function () {
         this.timeout(60000);
 
-        return GTPermissionManager.deployedContract(web3, account1, gas)
+        return GTPermissionManager.deployContract(web3, account1, gas)
             .then((contract) => permissionManager = contract)
-            .then(() => BSTokenData.deployedContract(web3, account1, permissionManager, gas))
+            .then(() => BSTokenData.deployContract(web3, account1, permissionManager, gas))
             .then(contract => {
                 bsTokenDataContract = contract;
-                return BSTokenBanking.deployedContract(web3, account1, bsTokenDataContract, permissionManager, gas);
+                return BSTokenBanking.deployContract(web3, account1, bsTokenDataContract, permissionManager, gas);
             })
             .then((contract) => bsTokenBankingContract = contract)
             .then(() => bsTokenDataContract.addLogicAsync(account3, { from: account1, gas: gas }))

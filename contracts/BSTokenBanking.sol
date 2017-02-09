@@ -10,7 +10,7 @@ contract BSTokenBanking is Admin {
 
     function BSTokenBanking(address bsTokenDataAddress, address permissionManagerAddress) {
         tokenData = BSTokenData(bsTokenDataAddress);
-        super.setPMAddress(permissionManagerAddress);
+        super.init(permissionManagerAddress);
     }
 
     function cashOut(uint256 amount, string bankAccount) {
