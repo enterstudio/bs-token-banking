@@ -1,6 +1,6 @@
 {
   "name": "bs-token-banking",
-  "version": "1.0.8",
+  "version": "1.0.7",
   "description": "Utility smart contract to convert bs-tokens from and to 'real money'.",
   "main": "src/index.js",
   "scripts": {
