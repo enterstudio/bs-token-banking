@@ -71,16 +71,45 @@ class BSTokenBanking {
 
 module.exports = BSTokenBanking;
 
-module.exports.contracts = Object.assign(BSTokenData.contracts, {
+module.exports.contracts = Object.freeze(Object.assign({}, BSTokenData.contracts, {
     'BSBanking.sol': fs.readFileSync(path.join(__dirname, '../contracts/BSTokenBanking.sol'), 'utf8')
-});
+}));
 
-module.exports.deployedContract = function (web3, admin, bsTokenData, permissionManager, gas) {
-    const contracts =  Object.assign(BSTokenData.contracts, BSTokenBanking.contracts);
+module.exports.deployContract = function (web3, admin, bsTokenData, permissionManager, gas) {
+    const contracts =  Object.assign({}, BSTokenData.contracts, BSTokenBanking.contracts);
     const deployer = new Deployer(web3, {sources: contracts}, 0);
     return deployer.deploy('BSTokenBanking', [bsTokenData.address, permissionManager.address], { from: admin, gas: gas })
         .then(bsTokenBanking => {
             return bsTokenData.addLogicAsync(bsTokenBanking.address, { from: admin, gas: gas })
+                .then(() => checkContracts(bsTokenBanking, bsTokenData))
                 .then(() => bsTokenBanking);
-        });
+        })
 };
+
+module.exports.deployedContract = function (web3, admin, abi, address, bsTokenData) {
+    const bsTokenBanking = web3.eth.contract(abi).at(address);
+    Promise.promisifyAll(bsTokenBanking);
+    checkContracts(bsTokenBanking, bsTokenData);
+    return Promise.resolve(bsTokenBanking);
+};
+
+function checkContracts(bsTokenBanking, bsTokenData) {
+    if (!bsTokenBanking.abi) {
+        throw new Error('abi must not be null');
+    }
+
+    if (!bsTokenBanking.address) {
+        throw new Error('address must not be null');
+    }
+
+    if (typeof bsTokenBanking.cashOutAsync === "undefined") {
+        throw new Error('contract has not been properly deployed');
+    }
+
+    return bsTokenData.logicsAsync(bsTokenBanking.address)
+        .then(exists => {
+            if (!exists) {
+                throw new Error('bsTokenBanking has not been added as a logic to bsTokenBanking');
+            }
+        });
+}
