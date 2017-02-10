@@ -1,2 +1,2 @@
-# bs-token-banking [![CircleCI](https://circleci.com/gh/BancoSabadell/bs-token-banking.svg?style=shield)](https://circleci.com/gh/BancoSabadell/bs-token-banking)
+# bs-token-banking [![CircleCI](https://circleci.com/gh/BancoSabadell/bs-token-banking.svg?style=shield)](https://circleci.com/gh/BancoSabadell/bs-token-banking) [![npm version](https://badge.fury.io/js/bs-token-banking.svg)](https://badge.fury.io/js/bs-token-banking)
 Utility smart contract to convert bs-tokens from and to 'real money'.
