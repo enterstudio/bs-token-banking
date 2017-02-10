@@ -86,7 +86,7 @@ module.exports.deployContract = function (web3, admin, bsTokenData, permissionMa
         })
 };
 
-module.exports.deployedContract = function (web3, admin, abi, address, bsTokenData) {
+module.exports.deployedContract = function (web3, abi, address, bsTokenData) {
     const bsTokenBanking = web3.eth.contract(abi).at(address);
     Promise.promisifyAll(bsTokenBanking);
     checkContracts(bsTokenBanking, bsTokenData);

@@ -47,8 +47,7 @@ describe('BSTokenBanking deployment', function () {
 
     describe('deployed', () => {
         it('should be fulfilled', () => {
-            return BSTokenBanking.deployedContract(web3, admin, bsTokenBanking.abi,
-                bsTokenBanking.address, bsTokenData);
+            return BSTokenBanking.deployedContract(web3, bsTokenBanking.abi, bsTokenBanking.address, bsTokenData);
         });
     });
 });
