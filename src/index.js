@@ -109,7 +109,7 @@ function checkContracts(bsTokenBanking, bsTokenData) {
     return bsTokenData.logicsAsync(bsTokenBanking.address)
         .then(exists => {
             if (!exists) {
-                throw new Error('bsTokenBanking has not been added as a logic to bsTokenBanking');
+                throw new Error('bsTokenBanking has not been added as a logic to bsTokenData');
             }
         });
 }
