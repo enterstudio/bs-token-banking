@@ -81,7 +81,6 @@ module.exports.deployContract = function (web3, admin, bsTokenData, permissionMa
     return deployer.deploy('BSTokenBanking', [bsTokenData.address, permissionManager.address], { from: admin, gas: gas })
         .then(bsTokenBanking => {
             return bsTokenData.addLogicAsync(bsTokenBanking.address, { from: admin, gas: gas })
-                .then(() => checkContracts(bsTokenBanking, bsTokenData))
                 .then(() => bsTokenBanking);
         })
 };
