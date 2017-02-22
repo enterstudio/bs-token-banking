@@ -6,6 +6,7 @@ const sendgrid = require('sendgrid');
 const fs = require("fs");
 const path = require("path");
 const Promise = require('bluebird');
+const BigNumber = require('bignumber.js');
 
 const gas = 3000000;
 
@@ -47,7 +48,7 @@ class BSTokenBanking {
         return this.unlockAccount(target, password)
             .then(() => this.bsTokenDataContract.getBalanceAsync(target))
             .then((balance) => {
-                if (balance < amount) {
+                if (balance.lessThan(new BigNumber(amount))) {
                     throw new Error(`${target} address has not enough funds`);
                 }
             })
