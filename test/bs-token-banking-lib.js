@@ -78,10 +78,14 @@ describe('BSTokenBanking lib', function () {
             .should.eventually.satisfy(totalSupply => totalSupply.equals(new BigNumber(200)),
                 `Total token supply should be 200 after 500€ cash in`);
     });
-
+    
     it('should fail if cash out amount greater than account balance', function () {
-            return lib.cashOut(account2, '', 201, fakeBankAccount)
-                .should.eventually.be.rejectedWith(`${account2} address has not enough funds`);
+        return lib.cashOut(account2, '', 201, fakeBankAccount)
+            .should.eventually.be.rejectedWith(`${account2} address has not enough funds`);
+    });
+
+    it('should succeed if cash out amount is less than account balance', function () {
+            return lib.cashOut(account2, '', 199, fakeBankAccount);
     });
 
     it('should fail if cash in is not performed by the contract owner', function () {
